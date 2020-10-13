@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 一个mapper对应一个接口 -->
+
+<mapper namespace="com.dao.UsersMapper">
+
+    <!-- 增加一个用户 -->
+    <insert id="addUser" parameterType="Users">
+        insert into myblog.users(username, password, avatar, role, email, blognum, fans, appreciate, communicate, visitedNumber, createTime)
+        values(#{username}, #{password}, #{avatar}, #{role}, #{email}, #{blognum}, #{fans}, #{appreciate}, #{communicate}, #{visitedNumber}, #{createTime});
+    </insert>
+
+    <!-- 删除一个用户 -->
+    <delete id="deleteUserById" parameterType="int">
+        delete from myblog.users where id = #{id};
+    </delete>
+
+    <!-- 更新一个用户 -->
+    <update id="updateUser" parameterType="Users">
+        update myblog.users
+        set username=#{username}, password=#{password}, avatar=#{avatar}, role=#{role}, email=#{email}, blognum=#{blognum}, fans=#{fans}, appreciate=#{appreciate}, communicate=#{communicate}, visitedNumber=#{visitedNumber}, createTime=#{createTime}
+        where id=#{id}
+    </update>
+
+    <!-- 查询一个用户 -->
+    <select id="queryUserById" resultType="Users">
+        select * from myblog.users where id=#{id};
+    </select>
+
+    <!-- 查询所有用户 -->
+    <select id="queryAllUsers" resultType="Users">
+        select * from myblog.users;
+    </select>
+
+<!--    判断用户登录-->
+    <select id="isLoginUser" resultType="Users">
+        select * from myblog.users where username=#{username}
+    </select>
+
+<!--    根据用户名获取用户-->
+    <select id="queryUserByUsername" resultType="Users">
+        select * from myblog.users where username=#{username}
+    </select>
+
+<!--    通过博客id获取用户-->
+    <select id="queryUserByBlogid" resultType="Users">
+    SELECT * from myblog.users
+    where id = (SELECT userId from myblog.blogs where id = #{id})
+    </select>
+
+<!--    找出博客数最多的10个人-->
+    <select id="queryUsersMoreBlog" resultType="Users">
+        select * from myblog.users order by blognum DESC limit 10;
+    </select>
+
+<!--    对博客数排序-->
+    <select id="orderUser" resultType="Users">
+        select * from myblog.users order by ${whichOne} DESC;
+    </select>
+
+<!--    <resultMap id="UserFloorResult" type="com.pojo.UserFloorVO">-->
+<!--        <result property="id" column="id"/>-->
+<!--        <result property="username" column="username"/>-->
+<!--        <result property="blognum" column="blognum"/>-->
+<!--        <result property="fans" column="fans"/>-->
+<!--        <result property="appreciate" column="appreciate"/>-->
+<!--        <result property="communicate" column="communicate"/>-->
+<!--        <result property="visitedNumber" column="visitedNumber"/>-->
+<!--        <result property="rownum" column="rownum"/>-->
+<!--    </resultMap>-->
+
+</mapper>

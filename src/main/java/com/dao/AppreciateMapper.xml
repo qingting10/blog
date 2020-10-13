@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 一个mapper对应一个接口 -->
+
+<mapper namespace="com.dao.AppreciateMapper">
+<!--    增-->
+    <insert id="addAppreciate" parameterType="Appreciate">
+        insert into myblog.appreciate(blogId, userId, createtime)
+        values (#{blogId}, #{userId}, #{createtime} )
+    </insert>
+
+<!--    删-->
+    <delete id="deleteAppreciateById" parameterType="int">
+        delete from myblog.appreciate where id=#{id};
+    </delete>
+
+<!--    改-->
+    <update id="updateAppreciate" parameterType="Appreciate">
+        update myblog.appreciate
+        set blogId=#{blogId}, userId=#{userId}, createtime=#{createtime}
+        where id=#{id}
+    </update>
+
+<!--    id查-->
+    <select id="queryAppreciateById" resultType="Appreciate">
+        select * from myblog.appreciate where id=#{id};
+    </select>
+
+<!--    查全部-->
+    <select id="queryAllAppreciate" resultType="Appreciate">
+        select * from myblog.appreciate;
+    </select>
+
+<!--    根据uid bid查-->
+    <select id="queryAppreciateByUidAndBid" resultType="com.pojo.Appreciate">
+        select * from myblog.appreciate
+        where userId=#{userId} and blogId=#{blogId};
+    </select>
+
+<!--    删除对应blogid的记录-->
+    <delete id="deleteApplist" parameterType="int">
+        delete from myblog.appreciate where blogId = #{blogId};
+    </delete>
+
+
+
+
+
+</mapper>

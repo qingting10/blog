@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 一个mapper对应一个接口 -->
+
+<mapper namespace="com.dao.ReplyMapper">
+<!--    增加-->
+    <insert id="addReply" parameterType="Reply">
+        insert into myblog.reply(parentId, userId, blogId, content, status, replyTime)
+        values (#{parentId}, #{userId}, #{blogId}, #{content}, #{status}, #{replyTime})
+    </insert>
+
+<!--    删除-->
+    <delete id="deleteReply" parameterType="int">
+        delete from myblog.reply where id=#{id}
+    </delete>
+
+    <!--    更新-->
+    <update id="updateReply" parameterType="Reply">
+        update myblog.reply
+        set parentId=#{parentId}, userId=#{userId}, blogId=#{blogId}, content=#{content}, status=#{status}, replyTime=#{replyTime}
+    </update>
+
+<!--    设置举报-->
+    <update id="setNormal" parameterType="int">
+        update  myblog.reply set status = "被举报" where id=#{id};
+    </update>
+
+<!--    设置撤销举报-->
+    <update id="cancelStatus" parameterType="int">
+        update  myblog.reply set status = "正常" where id=#{id};
+    </update>
+
+<!--根据id找评论-->
+    <select id="queryReplyById" resultType="Reply">
+        select * from myblog.reply where id=#{id};
+    </select>
+
+<!--找所有评论-->
+    <select id="queryAllReply" resultMap="firstReplyList">
+        SELECT u.username, r.*, b.title FROM myblog.users as u
+        JOIN myblog.reply as r join myblog.blogs as b
+        WHERE u.id = r.userId and b.id = r.blogId ;
+    </select>
+
+<!--    找所有被举报评论-->
+    <select id="statusList" resultMap="firstReplyList">
+        SELECT u.username, r.*, b.title FROM myblog.users as u
+        JOIN myblog.reply as r join myblog.blogs as b
+        WHERE u.id = r.userId and b.id = r.blogId and r.status="被举报";
+    </select>
+
+<!--    根据所有博客id  获取所有博客一级评论-->
+    <select id="queryFirstReplyByBid" resultMap="firstReplyList">
+        select r.*, u.avatar, u.username from myblog.reply as r
+        join myblog.users as u
+        where blogId=#{blogId} and parentId=0 and u.id = r.userId;
+    </select>
+
+<!--    //根据parentId  blogId，查找评论-->
+    <select id="querySecondReplyByPidAndBid" resultMap="firstReplyList">
+        select r.*, u.avatar, u.username from myblog.reply as r
+        join myblog.users as u
+        where parentId=#{parentId} and blogId=#{blogId} and u.id = r.userId;
+    </select>
+
+    <resultMap id="firstReplyList" type="com.pojo.ReplyUserVO">
+        <!--        type是类路径        property实体类属性     column数据库字段  -->
+        <result property="username" column="username"/>
+        <result property="avatar" column="avatar"/>
+        <result property="title" column="title"/>
+<!--        评论表id-->
+        <result property="id" column="id"/>
+        <result property="parentId" column="parentId"/>
+        <result property="userId" column="userId"/>
+        <result property="blogId" column="blogId"/>
+        <result property="content" column="content"/>
+        <result property="status" column="status"/>
+        <result property="replyTime" column="replyTime"/>
+
+    </resultMap>
+
+<!--    据username找评论-->
+    <select id="replyvoListByUsername" resultMap="firstReplyList">
+        SELECT u.username, r.*, b.title FROM myblog.users as u
+        JOIN myblog.reply as r join myblog.blogs as b
+        WHERE u.id = r.userId and b.id = r.blogId and u.username = #{username};
+    </select>
+
+<!--    //根据id  删除评论以及它的子评论（parendId==id）-->
+    <delete id="deleteReplyByidAndPid" parameterType="int">
+        delete from myblog.reply where id=#{id} or parentId=#{parentId};
+    </delete>
+
+<!--    根据parentId获取被回复者的username，和avatar-->
+    <select id="queryLastReply" resultType="Users">
+        select u.username as lastname, u.avatar as lastavatar from myblog.users as u
+        where u.id = (select r.userId from myblog.reply as r where r.id=#{id});
+    </select>
+
+<!--    根据userid删除-->
+    <delete id="deleteReplyByUserid" parameterType="int">
+        delete from myblog.reply where userId = #{userId};
+    </delete>
+
+
+
+
+
+
+
+
+</mapper>

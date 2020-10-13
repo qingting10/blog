@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 一个mapper对应一个接口 -->
+
+<mapper namespace="com.dao.AttentionMapper">
+<!--    增-->
+    <insert id="addAttention" parameterType="Attention">
+        insert into myblog.attention(userId, byUserId, attentionTime)
+        values(#{userId}, #{byUserId}, #{attentionTime});
+    </insert>
+<!--    删-->
+    <delete id="deleteAttentionById" parameterType="int">
+        delete from myblog.attention where id=#{id};
+    </delete>
+<!--    id查-->
+    <select id="queryAttentionById" resultType="Attention">
+        select * from myblog.attention where id=#{id};
+    </select>
+
+<!--    //userId    byUserId查-->
+    <select id="queryAttenByUidAndBuid" resultType="Attention">
+        select * from myblog.attention
+        where userId=#{userId} and byUserId=#{byUserId};
+    </select>
+
+<!--    根据userId查     attention集合-->
+    <select id="queryAttentionListByUid" resultType="Attention">
+        select * from myblog.attention where userId = #{userId};
+    </select>
+
+<!--    根据byUserId查   attention的集合-->
+    <select id="queryAttentListBybyuid" resultType="Attention">
+        select * from myblog.attention where byUserId = #{byUserId};
+    </select>
+
+</mapper>

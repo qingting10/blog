@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 一个mapper对应一个接口 -->
+
+<mapper namespace="com.dao.NoticeMapper">
+<!--    增加一个通知-->
+    <insert id="addNotice" parameterType="Notices">
+        insert into myblog.notices(sendUserId, receiveUserId, type, targetId, content, status,  sendTime)
+        values (#{sendUserId}, #{receiveUserId}, #{type}, #{targetId}, #{content}, #{status}, #{sendTime})
+    </insert>
+
+<!--    根据id删除一个通知-->
+    <delete id="deleteNotice" parameterType="int">
+        delete from myblog.notices where id=#{id}
+    </delete>
+
+<!--    更新通知-->
+    <update id="updateNotice" parameterType="Notices">
+        update myblog.notices
+        set sendUserId=#{sendUserId}, receiveUserId=#{receiveUserId}, type=#{type},targetId=#{targetId}, content=#{content}, status=#{status}, sendTime=#{sendTime}
+        where id=#{id}
+    </update>
+
+<!--    根据id查询通知-->
+    <select id="queryNoticeById" resultType="Notices">
+        select  * from myblog.notices where id=#{id};
+    </select>
+
+<!--    查询全部通知-->
+    <select id="queryAllNotice" resultType="Notices">
+        select * from myblog.notices;
+    </select>
+
+<!--    //根据receiveUserId, 查找对应消息（公告/关注/评论/点赞）的list-->
+    <select id="noticeList" resultType="Notices">
+        select * from myblog.notices
+        where receiveUserId=#{receiveUserId} and type=#{type} and status="未读";
+    </select>
+
+<!--    关注集合（包括username）-->
+    <select id="noticeUnameList" resultMap="noticeUserBlogVO">
+        select n.*, u.username from myblog.notices as n
+        join myblog.users as u
+        where n.receiveUserId=#{receiveUserId}
+        and n.type="关注"  and u.id = n.sendUserId
+        order by n.sendTime DESC
+    </select>
+
+<!--    点赞/评论集合（包括usname, title）-->
+    <select id="noticeUnameTitleList" resultMap="noticeUserBlogVO">
+        select n.*, u.username, b.title from myblog.notices as n
+        join myblog.users as u join myblog.blogs as b
+        where n.receiveUserId=#{receiveUserId} and n.type=#{type}
+        and u.id = n.sendUserId
+        and n.targetId = b.id
+        order by n.sendTime DESC
+    </select>
+
+
+    <resultMap id="noticeUserBlogVO" type="com.pojo.NoticeUserBlogVO">
+
+        <result property="id" column="id"/>
+        <result property="sendUserId" column="sendUserId"/>
+        <result property="receiveUserId" column="receiveUserId"/>
+        <result property="type" column="type"/>
+        <result property="targetId" column="targetId"/>
+        <result property="content" column="content"/>
+        <result property="status" column="status"/>
+        <result property="sendTime" column="sendTime"/>
+        <result property="username" column="username"/>
+        <result property="title" column="title"/>
+
+    </resultMap>
+
+<!--    根据targetId删除-->
+    <delete id="deleteNoticeByTargetId" parameterType="int">
+        delete from myblog.notices where targetId = #{targetId}
+    </delete>
+
+<!--    根据receiveUserId删除-->
+    <delete id="deleteNoticeByreceiveUserId" parameterType="int">
+        delete from myblog.notices where receiveUserId = #{receiveUserId};
+    </delete>
+</mapper>

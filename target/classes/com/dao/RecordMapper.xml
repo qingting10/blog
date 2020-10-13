@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 一个mapper对应一个接口 -->
+
+<mapper namespace="com.dao.RecordMapper">
+<!--    增加记录-->
+    <insert id="addRecord">
+        insert into myblog.record(managerId, content, createtime)
+        values ("007", "登录", "2020-02-03 14:02:42")
+    </insert>
+
+<!--    删除-->
+    <delete id="deleteRecordById" parameterType="int">
+        delete from myblog.record where id=#{id}
+    </delete>
+
+<!--    更新-->
+    <update id="updateRecord" parameterType="Record">
+        update myblog.record
+        set managerId=#{managerId}, content=#{content}, createtime=#{createtime}
+        where id=#{id}
+    </update>
+
+<!--    根据id查询记录-->
+    <select id="queryRecordById" resultType="Record">
+        select * from myblog.record where id=#{id}
+    </select>
+
+<!--    查询所有记录-->
+    <select id="queryAllRecord" resultType="Record">
+        select * from myblog.record;
+    </select>
+
+<!--    找出最后插入的记录-->
+    <select id="queryRecordLast" resultType="Record">
+        select * from myblog.record where  id in (select max(id) from myblog.record);
+    </select>
+
+
+</mapper>

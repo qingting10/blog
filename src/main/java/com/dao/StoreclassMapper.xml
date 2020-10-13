@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 一个mapper对应一个接口 -->
+
+<mapper namespace="com.dao.StoreclassMapper">
+<!--    增-->
+    <insert id="addStoreclass" parameterType="Storeclass">
+        insert into myblog.storeclass(uid, classname, createtime)
+        values(#{uid}, #{classname}, #{createtime});
+    </insert>
+<!--    删-->
+    <delete id="deleteStoreclassById" parameterType="int">
+        delete from myblog.storeclass where id=#{id};
+    </delete>
+<!--    根据uid 获取所有分类列表-->
+    <select id="queryStoreListByUid" resultType="Storeclass">
+        select * from myblog.storeclass where uid=#{uid};
+    </select>
+<!--    根据id获取storeclass对象-->
+<!--    <select id="queryStoreclassByCname" resultType="Storeclass">-->
+<!--        select * from myblog.storeclass where classname=#{classname};-->
+<!--    </select>-->
+<!--    根据uid classname 获取对象-->
+    <select id="queryStoreclassByUidAndClassname" resultType="Storeclass">
+        select * from myblog.storeclass where uid=#{uid} and classname=#{classname};
+    </select>
+
+
+</mapper>

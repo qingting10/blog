@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 一个mapper对应一个接口 -->
+
+<mapper namespace="com.dao.BlogMapper">
+
+<!--    增加一个博客-->
+    <insert id="addBlog" parameterType="Blogs">
+        insert into myblog.blogs(userId, title, content, updateTime, appreciate, communicate, visitedNumber, status, cid)
+        values (#{userId}, #{title}, #{content}, #{updateTime}, #{appreciate}, #{communicate}, #{visitedNumber}, #{status}, #{cid})
+    </insert>
+
+<!--    根据id删除一个Blog-->
+    <delete id="deleteBlogById" parameterType="int">
+        delete from myblog.blogs where id=#{id};
+    </delete>
+
+<!--    更新blog-->
+    <update id="updateBlog" parameterType="Blogs">
+        update myblog.blogs
+        set userId=#{userId}, title=#{title}, content=#{content}, updateTime=#{updateTime}, appreciate=#{appreciate}, communicate=#{communicate}, visitedNumber=#{visitedNumber}, status=#{status}, cid=#{cid}
+        where id=#{id}
+    </update>
+
+<!--    根据id查询，返回一个blog-->
+    <select id="queryBlogById" resultType="Blogs">
+        select * from myblog.blogs
+        where id=#{id}
+    </select>
+
+<!--    查询所有blog-->
+    <select id="queryAllBlog" resultMap="blogVoList">
+        SELECT u.username,u.avatar, c.classname, b.* FROM myblog.users as u
+        JOIN myblog.classify as c join myblog.blogs as b
+        WHERE u.id = b.userId and b.cid = c.id order by updateTime DESC
+    </select>
+
+<!--    根据博客标题查询博客-->
+    <select id="queryBlogByTitle" resultMap="blogVoList">
+        select u.username,u.avatar, c.classname, b.* from myblog.users as u
+        join myblog.classify as c join myblog.blogs as b
+        where u.id = b.userId and b.cid = c.id and title = #{title};
+    </select>
+
+<!--    根据userId，查询所有博客-->
+    <select id="queryBlogsByUserId" resultType="Blogs">
+        select * from myblog.blogs where userId=#{userId};
+    </select>
+
+<!--    多表查询，查username和blog-->
+    <select id="queryUnameAndBlogByBid" resultMap="blogVoList">
+        select b.*, u.username from myblog.blogs as b join myblog.users as u
+        where b.id = #{id} and u.id = b.userId;
+    </select>
+
+    
+    <resultMap id="blogVoList" type="com.pojo.BlogsVO">
+<!--        type是类路径        property实体类属性     column数据库字段  -->
+        <result property="username" column="username"/>
+        <result property="avatar" column="avatar"/>
+        <result property="classname" column="classname"/>
+        <result property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="appreciate" column="appreciate"/>
+        <result property="communicate" column="communicate"/>
+        <result property="visitedNumber" column="visitedNumber"/>
+        <result property="status" column="status"/>
+        <result property="cid" column="cid"/>
+    </resultMap>
+
+<!--    根据博客标题模糊查询-->
+    <select id="queryBlogByTitleLike" resultMap="blogVoList">
+        select b.*, u.username, u.avatar from myblog.blogs as b join myblog.users as u
+        where b.userId = u.id and b.title like concat('%', #{title}, '%');
+    </select>
+
+<!--    按创建时间排序   倒叙-->
+    <select id="queryListByTimelast" resultType="Blogs">
+        select * from myblog.blogs where userId=#{userId} order by updateTime DESC ;
+    </select>
+
+<!--    按创建时间排序   降叙-->
+    <select id="queryListByVisitnum" resultType="Blogs">
+        select * from myblog.blogs where userId=#{userId} order by visitedNumber DESC ;
+    </select>
+
+<!--    //获取cid对应的blog数量-->
+    <select id="countCid" resultType="Integer">
+        select count(*) as num from myblog.blogs where cid = #{cid};
+    </select>
+
+<!--    取阅读数最多的6个blog-->
+    <select id="hotBlogList" resultType="Blogs">
+        select * from myblog.blogs where userId=#{userId} order by visitedNumber DESC;
+    </select>
+
+<!--    找所有状态集合-->
+    <select id="statusList" resultMap="blogVoList">
+        SELECT u.username, c.classname, b.* FROM myblog.users as u
+        JOIN myblog.classify as c join myblog.blogs as b
+        WHERE u.id = b.userId and b.cid = c.id and b.status="被举报";
+    </select>
+
+<!--    删除博客  根据userId-->
+    <delete id="deleteBlogByUserId" parameterType="int">
+        delete from myblog.blogs where userId = #{userId};
+    </delete>
+
+<!--    撤销举报-->
+    <update id="cancelStatus" parameterType="int">
+        update myblog.blogs set status = "正常" where id=#{id};
+    </update>
+
+<!--    博客举报-->
+    <update id="putStatus" parameterType="int">
+        update myblog.blogs set status = "被举报" where id=#{id};
+    </update>
+
+<!--    根据cid uid查博客列表-->
+    <select id="blogCnameListByCidAndUid" resultMap="blogVoList">
+        select c.classname , b.* from myblog.classify as c join myblog.blogs as b
+        where c.id = b.cid and b.userId = c.uid
+        and b.userId=#{userId} and b.cid = #{cid};
+    </select>
+
+</mapper>

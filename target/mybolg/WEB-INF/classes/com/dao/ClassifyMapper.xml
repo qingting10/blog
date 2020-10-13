@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 一个mapper对应一个接口 -->
+
+<mapper namespace="com.dao.ClassifyMapper">
+<!--    增加-->
+    <insert id="addClassify" parameterType="Classify">
+        insert into myblog.classify(uid, classname, createtime)
+        values (#{uid}, #{classname}, #{createtime})
+    </insert>
+<!--    删除-->
+    <delete id="deleteClassifyById" parameterType="int">
+        delete from myblog.classify where id=#{id};
+    </delete>
+<!--更新-->
+    <update id="updateClassify" parameterType="Classify">
+        update myblog.classify
+        where id=#{id}
+    </update>
+<!--    根据id查找分类-->
+    <select id="queryClassifyById" resultType="Classify">
+        select * from myblog.classify where id=#{id};
+    </select>
+
+<!--查找所有classname-->
+    <select id="queryAllClassifyByUid" resultType="String" parameterType="int">
+        select classname from myblog.classify
+        where uid = #{uid};
+    </select>
+
+<!--    根据uid查找所有classify-->
+    <select id="queryListByUid" resultType="Classify">
+        select * from myblog.classify where uid = #{uid};
+    </select>
+
+<!--    根据classname uid查询classify-->
+    <select id="queryClassifyByClassname" resultType="com.pojo.Classify">
+        select * from myblog.classify
+        where classname=#{classname}
+        and uid = #{uid};
+    </select>
+
+<!--    删表  根据uid-->
+    <delete id="deleteClassifyByUid" parameterType="int">
+        delete from myblog.classify where uid = #{uid};
+    </delete>
+
+
+</mapper>

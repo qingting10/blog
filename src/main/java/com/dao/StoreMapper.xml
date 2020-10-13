@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 一个mapper对应一个接口 -->
+
+<mapper namespace="com.dao.StoreMapper">
+    <insert id="addStore" parameterType="Store">
+        insert into myblog.store(blogId, userId, storetime, scId)
+        values(#{blogId}, #{userId}, #{storetime}, #{scId});
+    </insert>
+<!--    删-->
+    <delete id="deleteStoreById" parameterType="int">
+        delete from myblog.store where id=#{id};
+    </delete>
+
+<!--    获取收藏列表-->
+<!--    <select id="collectList" resultMap="collectResult">-->
+
+<!--    </select>-->
+
+<!--    合并表storestoreclass-->
+<!--    <resultMap id="collectResult" type="com.pojo.StoreVO">-->
+<!--        <result property="id" column="id"/>-->
+<!--        <result property="blogId" column="blogId"/>-->
+<!--        <result property="userId" column="userId"/>-->
+<!--        <result property="storetime" column="storetime"/>-->
+<!--        <result property="scId" column="scId"/>-->
+<!--        <result property="classname" column="classname"/>-->
+<!--    </resultMap>-->
+
+<!--    //查询数据已存在-->
+    <select id="queryStoreByUidAndBidAndscId" resultType="Store">
+        select * from myblog.store
+        where userId=#{userId} and blogId = #{blogId} and scId = #{scId};
+    </select>
+
+<!--    根据userId  scId查找blogId-->
+    <select id="queryBidByUserIdAndscId" resultType="Integer">
+        select blogId from myblog.store where userId = #{userId} and scId=#{scId};
+    </select>
+
+
+
+</mapper>
